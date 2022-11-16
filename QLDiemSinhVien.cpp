@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
 #include <iomanip>
+#include <iostream>
+
 using namespace std;
 
 // Bang diem
@@ -77,7 +79,8 @@ void printBD(BangDiem bd)
 struct SinhVien
 {
     int maSV;
-    string giaoVien, lop;
+    char giaoVien[200];
+    char lop[200];
     char tenSV[200];
     BangDiem bd;
 };
@@ -156,9 +159,11 @@ void importBDSV(SinhVien &sv)
     fflush(stdin);
     gets(sv.tenSV);
     cout << "\nNhap lop: ";
-    getline(cin, sv.lop);
+    fflush(stdin);
+    gets(sv.lop);
     cout << "\nNhap giao vien: ";
-    getline(cin, sv.giaoVien);
+    fflush(stdin);
+    gets(sv.giaoVien);
     cout << "\n---------------------------------------\n";
     cout << "\nNhap bang diem cua sinh vien:\n ";
     importBD(sv.bd);
@@ -441,6 +446,11 @@ void editBDSVById(ListSinhVien listsv)
             cout << "\nSua diem thi: ";
             cin >> p->infoSV.bd.diemThi;
         }
+        else
+        {
+            cout << "\nMa sinh vien khong ton tai trong danh sach bang diem!!";
+            exit(1);
+        }
     }
     cout << "\n_______________________________________________________\n";
     cout << "\nDanh sach sau khi sua sinh vien co ma " << id << " \n";
@@ -448,7 +458,7 @@ void editBDSVById(ListSinhVien listsv)
     cout << "\n_______________________________________________________\n";
 }
 
-void editBDSVPoint3(ListSinhVien listsv0)
+void editBDSVPoint3(ListSinhVien listsv)
 {
     for (NodeSV *p = listsv.head; p != NULL; p = p->next)
     {
@@ -488,9 +498,91 @@ void countBDSVPointAny(ListSinhVien listsv)
     cout << "\n_____________________________________________________________________\n";
 }
 
-int main()
+void countBDSVAB(ListSinhVien litsv)
+{
+    int count = 0;
+    int a, b;
+    cout << "Nhap khoang a: ";
+    cin >> a;
+    cout << "\nNhap khoang b: ";
+    cin >> b;
+    for (NodeSV *p = listsv.head; p != NULL; p = p->next)
+    {
+        if (p->infoSV.bd.diemTBHK >= a && p->infoSV.bd.diemTBHK <= b)
+        {
+            count++;
+        }
+    }
+    cout << "\n_____________________________________________________________________\n";
+    cout << "\nCo " << count << " sinh vien  co bang diem thuoc khoang  (" << a << ";" << b << ")";
+    cout << "\n_____________________________________________________________________\n";
+}
+
+void printBDSVTB(ListSinhVien listsv)
+{
+    for (NodeSV *p = listsv.head; p != NULL; p = p->next)
+    {
+        if (p->infoSV.bd.diemTBHK < 5)
+        {
+            printBDSV(p->infoSV);
+        }
+    }
+}
+
+void saveFile(FILE *f, ListSinhVien listsv, char *namefile)
+{
+    f = fopen(namefile, "wt");
+    if (f == NULL)
+    {
+        cout << "Loi mo file";
+        exit(0);
+    }
+    else
+    {
+        int n = 0;
+        NodeSV *p;
+        for (p = listsv.head; p != NULL; p = p->next)
+        {
+            n++;
+        }
+        fwrite(&n, sizeof(int), 1, f);
+        for (p = listsv.head; p != NULL; p = p->next)
+        {
+            fwrite(&p->infoSV, sizeof(SinhVien), 1, f);
+        }
+        fclose(f);
+    }
+}
+
+void readFile(FILE *f, ListSinhVien &listsv, char *namefile)
+{
+    f = fopen(namefile, "rt");
+    if (f == NULL)
+    {
+        cout << "File rong!!";
+        exit(1);
+    }
+    else
+    {
+        SinhVien sv;
+        NodeSV *p;
+        int n = 0;
+        fread(&n, sizeof(int), 1, f);
+        for (int i = 0; i < n; i++)
+        {
+            fread(&sv, sizeof(SinhVien), 1, f);
+            p = getNodeSV(sv);
+            insertFirstSV(listsv, p);
+        }
+        fclose(f);
+    }
+}
+
+int main(int argc, char const *argv[])
 {
     ListSinhVien listsv;
+    FILE *f, *g;
+    char namefile[200];
     int chon;
     do
     {
@@ -564,17 +656,31 @@ int main()
             editBDSVById(listsv);
             break;
         case 15:
-            countBDSVPointAny(listsv);
+            editBDSVPoint3(listsv);
             break;
         case 16:
+            countBDSVPointAny(listsv);
             break;
         case 17:
+            countBDSVAB(listsv);
             break;
         case 18:
+            printBDSVTB(listsv);
             break;
         case 19:
+            cout << "Nhap ten file muon ghi: ";
+            fflush(stdin);
+            gets(namefile);
+            saveFile(f, listsv, namefile);
+            cout << "\nGhi file thanh cong.....\n";
             break;
         case 20:
+            cout << "Nhap ten file muon doc: ";
+            fflush(stdin);
+            gets(namefile);
+            readFile(f, listsv, namefile);
+            cout << "\nDanh sach doc trong file\n";
+            printListBD(listsv);
             break;
         case 0:
             break;
