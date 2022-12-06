@@ -26,9 +26,9 @@ typedef ListSinhVien listsv;
 
 void initSV(ListSinhVien &listsv)
 {
-    listsv.head = NULL;
     listsv.tail = NULL;
-};
+    listsv.head = NULL;
+}
 
 NodeSV *getNodeSV(SinhVien x)
 {
@@ -42,34 +42,6 @@ NodeSV *getNodeSV(SinhVien x)
     p->infoSV = x;
     p->next = NULL;
     return p;
-}
-
-void insertFirstSV(ListSinhVien &listsv, NodeSV *p)
-{
-    if (listsv.head == NULL)
-    {
-        listsv.head = p;
-        listsv.tail = p;
-    }
-    else
-    {
-        p->next = listsv.head;
-        listsv.head = p;
-    }
-}
-
-void insertTailSV(ListSinhVien &listsv, NodeSV *p)
-{
-    if (listsv.tail == NULL)
-    {
-        listsv.tail = p;
-        listsv.head = p;
-    }
-    else
-    {
-        listsv.tail->next = p;
-        listsv.tail = p;
-    }
 }
 
 void importSV(SinhVien &sv)
@@ -104,82 +76,12 @@ void printSV(SinhVien sv)
     cout << setw(10) << sv.giaoVien << " | " << endl;
 }
 
-void importListSV(ListSinhVien &listsv)
-{
-    initSV(listsv);
-    int n;
-    cout << "Nhap so luong sinh vien: ";
-    cin >> n;
-    for (int i = 0; i < n; i++)
-    {
-        cout << "\nSinh vien thu " << i + 1 << endl;
-        SinhVien sv;
-        importSV(sv);
-        NodeSV *p = getNodeSV(sv);
-        insertFirstSV(listsv, p);
-    }
-}
-
-void printListSV(ListSinhVien &listsv)
-{
-    cout << "----------- THONG TIN SINH VIEN -----------" << endl;
-    for (NodeSV *p = listsv.head; p != NULL; p = p->next)
-    {
-        printSV(p->infoSV);
-        cout << "\n_______________________________________________________\n";
-    }
-}
-
-void saveFile(ListSinhVien listsv)
-{
-    char namefile[50];
-    cout << "Nhap file can ghi: ";
-    fflush(stdin);
-    gets(namefile);
-    FILE *f;
-    NodeSV *p;
-    f = fopen(namefile, "wt");
-    int n = 0;
-    for (p = listsv.head; p != NULL; p = p->next)
-        n++;
-    fwrite(&n, sizeof(int), 1, f);
-    for (p = listsv.head; p != NULL; p = p->next)
-    {
-        fwrite(&p->infoSV, sizeof(SinhVien), 1, f);
-    }
-    fclose(f);
-    cout << "Luu file " << namefile << " thanh cong........" << endl;
-}
-
-void readFile(ListSinhVien &listsv)
-{
-    initSV(listsv);
-    char namefile[50];
-    cout << "Nhap file can doc: ";
-    fflush(stdin);
-    gets(namefile);
-    FILE *f;
-    SinhVien sv;
-    NodeSV *p;
-    int n = 0;
-    f = fopen(namefile, "rt");
-    fread(&n, sizeof(int), 1, f);
-    for (int i = 0; i < n; i++)
-    {
-        fread(&sv, sizeof(SinhVien), 1, f);
-        p = getNodeSV(sv);
-        insertFirstSV(listsv, p);
-        printSV(p->infoSV);
-    }
-    fclose(f);
-}
-
 // BangDiem
 struct BangDiem
 {
     float diem45p, diemGK, diemThi;
     float diemTBHK;
-    char maSV[50];
+    SinhVien listSV;
 };
 typedef BangDiem bd;
 
@@ -246,9 +148,9 @@ void insertTailBD(ListBangDiem &listbd, NodeBD *p)
 
 void importBD(BangDiem &bd)
 {
-    cout << "Nhap ma sinh vien: ";
-    fflush(stdin);
-    gets(bd.maSV);
+    cout << "\nNhap thong tin sinh vien\n";
+    importSV(bd.listSV);
+    cout << "\nNhap thong tin bang diem cua sinh vien\n";
     cout << "\nNhap diem 45': ";
     cin >> bd.diem45p;
     cout << "\nNhap diem GK: ";
@@ -259,8 +161,7 @@ void importBD(BangDiem &bd)
 
 void printBD(BangDiem bd)
 {
-    cout << setw(10) << "Ma sinh vien"
-         << " | ";
+    printSV(bd.listSV);
     cout << setw(10) << "Diem 45 phut"
          << " | ";
     cout << setw(10) << "Diem GK"
@@ -269,7 +170,6 @@ void printBD(BangDiem bd)
          << " | ";
     cout << setw(10) << "Diem TBHK"
          << " | " << endl;
-    cout << setw(12) << bd.maSV << " | ";
     cout << setw(10) << bd.diem45p << " | ";
     cout << setw(10) << bd.diemGK << " | ";
     cout << setw(10) << bd.diemThi << " | ";
@@ -278,10 +178,8 @@ void printBD(BangDiem bd)
 
 void importListBD(ListBangDiem &listbd)
 {
-    initBD(listbd);
     int n;
     cout << "Nhap so luong bang diem: ";
-    initBD(listbd);
     cin >> n;
     cin.ignore();
     for (int i = 0; i < n; i++)
@@ -305,7 +203,7 @@ void printListBD(ListBangDiem &listbd)
     }
 }
 
-void saveFileBD(ListBangDiem &listbd)
+void saveFileBD(ListBangDiem listbd)
 {
     char namefile[50];
     cout << "Nhap file can ghi: ";
@@ -313,7 +211,7 @@ void saveFileBD(ListBangDiem &listbd)
     gets(namefile);
     FILE *f;
     NodeBD *p;
-    f = fopen(namefile, "wt");
+    f = fopen(namefile, "wb");
     int n = 0;
     for (p = listbd.head; p != NULL; p = p->next)
         n++;
@@ -328,7 +226,6 @@ void saveFileBD(ListBangDiem &listbd)
 
 void readFileBD(ListBangDiem &listbd)
 {
-    initBD(listbd);
     char namefile[50];
     cout << "Nhap file can doc: ";
     fflush(stdin);
@@ -336,33 +233,41 @@ void readFileBD(ListBangDiem &listbd)
     FILE *f;
     BangDiem bd;
     NodeBD *p;
-    int n = 0;
-    f = fopen(namefile, "rt");
+    int n;
+    f = fopen(namefile, "rb");
     fread(&n, sizeof(int), 1, f);
     for (int i = 0; i < n; i++)
     {
         fread(&bd, sizeof(BangDiem), 1, f);
         p = getNodeBD(bd);
         printBD(p->infoBD);
-        insertFirstBD(listbd, p);
+        insertTailBD(listbd, p);
     }
     fclose(f);
 }
 
 void printById(ListBangDiem listbd)
 {
+    NodeBD *p;
+    p = listbd.head;
     char id[50];
     cout << "Nhap ma sinh vien can in thong tin bang diem: ";
     fflush(stdin);
     gets(id);
-    for (NodeBD *p = listbd.head; p != NULL; p = p->next)
+    for (p = listbd.head; p != NULL; p = p->next)
     {
-        if (strcmp(id, p->infoBD.maSV) == 0)
+        if (strcmp(id, p->infoBD.listSV.maSV) == 0)
         {
-            cout << "___________________________________________________________________________________________" << endl;
+            cout << "\n______________________________________________________________________________________________\n";
             printBD(p->infoBD);
-            cout << "___________________________________________________________________________________________" << endl;
+            cout << "\n______________________________________________________________________________________________\n";
+            break;
         }
+    }
+    if (p == NULL)
+    {
+        cout << "Khong co ma sinh vien " << id << " trong danh sach" << endl;
+        cout << "\n__________________________________________________________________\n";
     }
 }
 
@@ -371,26 +276,23 @@ void findById(ListBangDiem listbd)
     NodeBD *p;
     p = listbd.head;
     char id[50];
-    cout << "Nhap ma sinh vien de tim kiem bang diem: ";
+    cout << "Nhap ma sinh vien can tìm  kiem thong tin bang diem: ";
     fflush(stdin);
     gets(id);
-    while (p != NULL)
+    for (p = listbd.head; p != NULL; p = p->next)
     {
-        if (strcmp(id, p->infoBD.maSV) == 0)
+        if (strcmp(id, p->infoBD.listSV.maSV) == 0)
+        {
+            cout << "\n______________________________________________________________________________________________\n";
+            printBD(p->infoBD);
             break;
-        p = p->next;
+            cout << "\n______________________________________________________________________________________________\n";
+        }
     }
     if (p == NULL)
     {
         cout << "Khong tim thay ma sinh vien " << id << " trong danh sach" << endl;
         cout << "\n__________________________________________________________________\n";
-    }
-    else
-    {
-        cout << "Thong tin bang diem sinh vien co ma: " << id << endl;
-        cout << "___________________________________________________________________________________________" << endl;
-        printBD(p->infoBD);
-        cout << "___________________________________________________________________________________________" << endl;
     }
 }
 
@@ -447,7 +349,7 @@ void averangePointBDSV(ListBangDiem &listbd)
     gets(id);
     for (NodeBD *p = listbd.head; p != NULL; p = p->next)
     {
-        if (strcmp(id, p->infoBD.maSV) == 0)
+        if (strcmp(id, p->infoBD.listSV.maSV) == 0)
         {
             avr = p->infoBD.diem45p + p->infoBD.diemGK + p->infoBD.diemThi;
         }
@@ -544,7 +446,7 @@ void removeBDSVById(ListBangDiem listbd)
     gets(id);
     while (p != NULL)
     {
-        if (strcmp(id, p->infoBD.maSV) == 0)
+        if (strcmp(id, p->infoBD.listSV.maSV) == 0)
         {
             break;
         }
@@ -553,7 +455,7 @@ void removeBDSVById(ListBangDiem listbd)
     }
     if (p == NULL)
     {
-        cout << "Khong tim thay ma sinh vien!!!" << endl;
+        cout << "Khong tim thay ma sinh vien " << id << " !!!" << endl;
     }
     if (q != NULL)
     {
@@ -584,7 +486,7 @@ void editBDSVById(ListBangDiem listbd)
     gets(id);
     while (p != NULL)
     {
-        if (strcmp(id, p->infoBD.maSV) == 0)
+        if (strcmp(id, p->infoBD.listSV.maSV) == 0)
             break;
         p = p->next;
     }
@@ -613,32 +515,24 @@ void editBDSVPoint3(ListBangDiem listbd)
 {
     NodeBD *p;
     p = listbd.head;
-    while (p != NULL)
+    for (p = listbd.head; p != NULL; p = p->next)
     {
         if ((p->infoBD.diem45p * 0.2 + p->infoBD.diemGK * 0.3 + p->infoBD.diemThi * 0.5) <= 3)
-            break;
-        p = p->next;
+        {
+            cout << "Sua diem sinh vien co diem tong trung binh duoi 3: " << endl;
+            cout << "\nDiem 45 phut:";
+            cin >> p->infoBD.diem45p;
+            cout << "\nDiem giua ki: ";
+            cin >> p->infoBD.diemGK;
+            cout << "\nDiem thi: ";
+            cin >> p->infoBD.diemThi;
+        }
     }
     if (p == NULL)
     {
-        cout << "Khong co sinh vien nao co diem duoi 3";
+        cout << "Khong co sinh vien nao co diem tong trung binh hoc ki duoi 3!!" << endl;
         cout << "\n__________________________________________________________________\n";
     }
-    else
-    {
-        cout << "Sua diem sinh vien co diem tong trung binh duoi 3: " << endl;
-        cout << "\nDiem 45 phut:";
-        cin >> p->infoBD.diem45p;
-        cout << "\nDiem giua ki: ";
-        cin >> p->infoBD.diemGK;
-        cout << "\nDiem thi: ";
-        cin >> p->infoBD.diemThi;
-    }
-    cout << "\n_______________________________________________________\n";
-    cout << "\nDanh sach sau khi sua sinh vien co diem duoi 3 "
-         << " \n";
-    printListBD(listbd);
-    cout << "\n_______________________________________________________\n";
 }
 
 void countBDSVPointAny(ListBangDiem listbd)
@@ -681,169 +575,119 @@ void countBDSVAB(ListBangDiem listbd)
 
 void printBDSVTB(ListBangDiem listbd)
 {
-    for (NodeBD *p = listbd.head; p != NULL; p = p->next)
+    NodeBD *p;
+    p = listbd.head;
+    for (p = listbd.head; p != NULL; p = p->next)
     {
         if ((p->infoBD.diem45p * 0.2 + p->infoBD.diemGK * 0.3 + p->infoBD.diemThi * 0.5) < 5)
         {
             cout << "___________________________________________________________________________________________" << endl;
             printBD(p->infoBD);
+            break;
             cout << "___________________________________________________________________________________________" << endl;
         }
+    }
+    if (p == NULL)
+    {
+        cout << "\nKhong co sinh vien nao co tong diem trung binh hoc ki duoi trung binh!!\n";
     }
 }
 
 int main()
 {
-    SinhVien sv;
-    BangDiem bd;
-    ListSinhVien listsv;
     ListBangDiem listbd;
-    NodeSV *p;
-    NodeBD *q;
+    initBD(listbd);
     int chon;
-    // initSV(listsv);
-    // initBD(listbd);
     while (chon != 0)
     {
-        cout << "-------------------- MENU QUAN LY BANG DIEM -------------------";
-        cout << "\n1. Quan ly sinh vien";
-        cout << "\n2. Quan ly diem cua sinh vien";
-        cout << "\n0. Thoat";
-        cout << "\nMoi chon chuc nang quan ly: ";
+        cout << "-------------------------- QUAN LY BANG DIEM CUA SINH VIEN ------------------------";
+        cout << "\n1. Nhap danh sach bang diem";
+        cout << "\n2. In danh sach bang diem";
+        cout << "\n3. In thong tin bang diem cua sinh vien theo ma sinh vien";
+        cout << "\n4. Them 1 bang diem vao dau danh sach";
+        cout << "\n5. Them 1 bang diem vao cuoi danh sach";
+        cout << "\n6. Tim kiem bang diem cua sinh vien theo ma sinh vien";
+        cout << "\n7. Tinh tong diem trung binh hoc ki cua tat ca cac sinh vien";
+        cout << "\n8. Tinh trung binh cong diem cua 1 sinh vien theo ma sinh vien";
+        cout << "\n9. In thong tin sinh vien co diem trung binh cong lon nhat";
+        cout << "\n10. In thong tin sinh vien co diem trung binh cong nho nhat";
+        cout << "\n11. Sap xep danh sach bang diem theo thu tu tang dan";
+        cout << "\n12. Sap xep danh sach bang diem theo thu tu giam dan";
+        cout << "\n13. Xoa bang diem theo ma sinh vien";
+        cout << "\n14. Sua diem cua sinh vien theo ma sinh vien";
+        cout << "\n15. Sua diem cua sinh vien co diem trung binh cong duoi 3";
+        cout << "\n16. Dem so sinh vien co diem trung binh hoc ki tren 1 con so nao do";
+        cout << "\n17. Dem so sinh vien co diem trung binh hoc ki trong 1 khoang nao do";
+        cout << "\n18. In danh sach sinh vien co diem tong trung binh hoc ki duoi trung binh";
+        cout << "\n19. Ghi file (ten file duoc nhap tu ban phim)";
+        cout << "\n20. Doc file (ten file duoc nhap tu ban phim)";
+        cout << "\n0. Thoat khoi chuong trinh";
+        cout << "\nMoi ban chon chuc nang de thuc hien: ";
         cin >> chon;
 
         switch (chon)
         {
         case 1:
-            while (chon != 0)
-            {
-                cout << "------------------ SINH VIEN ------------------";
-                cout << "\n1. Nhap thong tin sinh vien";
-                cout << "\n2. In thong tin sinh vien";
-                cout << "\n3. Ghi file";
-                cout << "\n4. Doc file";
-                cout << "\n0. Thoat";
-                cout << "\nMoi ban chon chuc nang: ";
-                cin >> chon;
-
-                switch (chon)
-                {
-                case 1:
-                    importListSV(listsv);
-                    break;
-                case 2:
-                    printListSV(listsv);
-                    break;
-                case 3:
-                    saveFile(listsv);
-                    break;
-                case 4:
-                    readFile(listsv);
-                    break;
-                case 0:
-                    break;
-                default:
-                    break;
-                }
-            }
+            importListBD(listbd);
             break;
         case 2:
-            while (chon != 0)
-            {
-                cout << "-------------------------- QUAN LY BANG DIEM CUA SINH VIEN ------------------------";
-                cout << "\n1. Nhap danh sach bang diem";
-                cout << "\n2. In danh sach bang diem";
-                cout << "\n3. In thong tin bang diem cua sinh vien theo ma sinh vien";
-                cout << "\n4. Them 1 bang diem vao dau danh sach";
-                cout << "\n5. Them 1 bang diem vao cuoi danh sach";
-                cout << "\n6. Tim kiem bang diem cua sinh vien theo ma sinh vien";
-                cout << "\n7. Tinh tong diem trung binh hoc ki cua tat ca cac sinh vien";
-                cout << "\n8. Tinh trung binh cong diem cua 1 sinh vien theo ma sinh vien";
-                cout << "\n9. In thong tin sinh vien co diem trung binh cong lon nhat";
-                cout << "\n10. In thong tin sinh vien co diem trung binh cong nho nhat";
-                cout << "\n11. Sap xep danh sach bang diem theo thu tu tang dan";
-                cout << "\n12. Sap xep danh sach bang diem theo thu tu giam dan";
-                cout << "\n13. Xoa bang diem theo ma sinh vien";
-                cout << "\n14. Sua diem cua sinh vien theo ma sinh vien";
-                cout << "\n15. Sua diem cua sinh vien co diem trung binh cong duoi 3";
-                cout << "\n16. Dem so sinh vien co diem trung binh hoc ki tren 1 con so nao do";
-                cout << "\n17. Dem so sinh vien co diem trung binh hoc ki trong 1 khoang nao do";
-                cout << "\n18. In danh sach sinh vien co diem tong trung binh hoc ki duoi trung binh";
-                cout << "\n19. Ghi file (ten file duoc nhap tu ban phim)";
-                cout << "\n20. Doc file (ten file duoc nhap tu ban phim)";
-                cout << "\n0. Thoat khoi chuong trinh";
-                cout << "\nMoi ban chon chuc nang de thuc hien: ";
-                cin >> chon;
+            printListBD(listbd);
+            break;
+        case 3:
+            printById(listbd);
+            break;
+        case 4:
+            addFirstBD(listbd);
 
-                switch (chon)
-                {
-                case 1:
-                    importListBD(listbd);
-                    break;
-                case 2:
-                    printListBD(listbd);
-                    break;
-                case 3:
-                    printById(listbd);
-                    break;
-                case 4:
-                    addFirstBD(listbd);
-
-                    break;
-                case 5:
-                    addTailBD(listbd);
-                    break;
-                case 6:
-                    findById(listbd);
-                    break;
-                case 7:
-                    totalPointBDSV(listbd);
-                    break;
-                case 8:
-                    averangePointBDSV(listbd);
-                    break;
-                case 9:
-                    printBDSVMax(listbd);
-                    break;
-                case 10:
-                    printBDSVMin(listbd);
-                    break;
-                case 11:
-                    sortListBDSVRise(listbd);
-                    break;
-                case 12:
-                    sortListBDSVReduce(listbd);
-                    break;
-                case 13:
-                    removeBDSVById(listbd);
-                    break;
-                case 14:
-                    editBDSVById(listbd);
-                    break;
-                case 15:
-                    editBDSVPoint3(listbd);
-                    break;
-                case 16:
-                    countBDSVPointAny(listbd);
-                    break;
-                case 17:
-                    countBDSVAB(listbd);
-                    break;
-                case 18:
-                    printBDSVTB(listbd);
-                    break;
-                case 19:
-                    saveFileBD(listbd);
-                    break;
-                case 20:
-                    readFileBD(listbd);
-                    break;
-                case 0:
-                    break;
-                default:
-                    break;
-                }
-            }
+            break;
+        case 5:
+            addTailBD(listbd);
+            break;
+        case 6:
+            findById(listbd);
+            break;
+        case 7:
+            totalPointBDSV(listbd);
+            break;
+        case 8:
+            averangePointBDSV(listbd);
+            break;
+        case 9:
+            printBDSVMax(listbd);
+            break;
+        case 10:
+            printBDSVMin(listbd);
+            break;
+        case 11:
+            sortListBDSVRise(listbd);
+            break;
+        case 12:
+            sortListBDSVReduce(listbd);
+            break;
+        case 13:
+            removeBDSVById(listbd);
+            break;
+        case 14:
+            editBDSVById(listbd);
+            break;
+        case 15:
+            editBDSVPoint3(listbd);
+            printListBD(listbd);
+            break;
+        case 16:
+            countBDSVPointAny(listbd);
+            break;
+        case 17:
+            countBDSVAB(listbd);
+            break;
+        case 18:
+            printBDSVTB(listbd);
+            break;
+        case 19:
+            saveFileBD(listbd);
+            break;
+        case 20:
+            readFileBD(listbd);
             break;
         case 0:
             break;
