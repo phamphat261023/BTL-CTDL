@@ -62,18 +62,10 @@ void importSV(SinhVien &sv)
 
 void printSV(SinhVien sv)
 {
-    cout << setw(10) << "Ma sinh vien"
-         << " | ";
-    cout << setw(10) << "Ho ten"
-         << " | ";
-    cout << setw(10) << "Lop"
-         << " | ";
-    cout << setw(10) << "Giao vien"
-         << " | " << endl;
     cout << setw(12) << sv.maSV << " | ";
     cout << setw(10) << sv.tenSV << " | ";
     cout << setw(10) << sv.lop << " | ";
-    cout << setw(10) << sv.giaoVien << " | " << endl;
+    cout << setw(10) << sv.giaoVien << " | ";
 }
 
 // BangDiem
@@ -162,14 +154,6 @@ void importBD(BangDiem &bd)
 void printBD(BangDiem bd)
 {
     printSV(bd.listSV);
-    cout << setw(10) << "Diem 45 phut"
-         << " | ";
-    cout << setw(10) << "Diem GK"
-         << " | ";
-    cout << setw(10) << "Diem thi"
-         << " | ";
-    cout << setw(10) << "Diem TBHK"
-         << " | " << endl;
     cout << setw(10) << bd.diem45p << " | ";
     cout << setw(10) << bd.diemGK << " | ";
     cout << setw(10) << bd.diemThi << " | ";
@@ -195,11 +179,26 @@ void importListBD(ListBangDiem &listbd)
 void printListBD(ListBangDiem &listbd)
 {
     cout << "-------------------------- DANH SACH BANG DIEM CUA HOC SINH ------------------------" << endl;
+    cout << setw(10) << "Ma sinh vien"
+         << " | ";
+    cout << setw(10) << "Ho ten"
+         << " | ";
+    cout << setw(10) << "Lop"
+         << " | ";
+    cout << setw(10) << "Giao vien"
+         << " | ";
+    cout << setw(10) << "Diem 45 phut"
+         << " | ";
+    cout << setw(10) << "Diem GK"
+         << " | ";
+    cout << setw(10) << "Diem thi"
+         << " | ";
+    cout << setw(10) << "Diem TBHK"
+         << " | " << endl;
     for (NodeBD *p = listbd.head; p != NULL; p = p->next)
     {
-        cout << "Bang diem" << endl;
         printBD(p->infoBD);
-        cout << "\n___________________________________________________________________________________________\n";
+        cout << "\n____________________________________________________________________________________________________________\n";
     }
 }
 
@@ -240,9 +239,9 @@ void readFileBD(ListBangDiem &listbd)
     {
         fread(&bd, sizeof(BangDiem), 1, f);
         p = getNodeBD(bd);
-        printBD(p->infoBD);
         insertTailBD(listbd, p);
     }
+    printListBD(listbd);
     fclose(f);
 }
 
@@ -254,20 +253,39 @@ void printById(ListBangDiem listbd)
     cout << "Nhap ma sinh vien can in thong tin bang diem: ";
     fflush(stdin);
     gets(id);
-    for (p = listbd.head; p != NULL; p = p->next)
+    while (p != NULL)
     {
         if (strcmp(id, p->infoBD.listSV.maSV) == 0)
-        {
-            cout << "\n______________________________________________________________________________________________\n";
-            printBD(p->infoBD);
-            cout << "\n______________________________________________________________________________________________\n";
             break;
-        }
+        p = p->next;
     }
     if (p == NULL)
     {
         cout << "Khong co ma sinh vien " << id << " trong danh sach" << endl;
         cout << "\n__________________________________________________________________\n";
+    }
+    else
+    {
+        cout << "Thong tin bang diem sinh vien co ma: " << id << endl;
+        cout << "\n____________________________________________________________________________________________________________\n";
+        cout << setw(10) << "Ma sinh vien"
+             << " | ";
+        cout << setw(10) << "Ho ten"
+             << " | ";
+        cout << setw(10) << "Lop"
+             << " | ";
+        cout << setw(10) << "Giao vien"
+             << " | ";
+        cout << setw(10) << "Diem 45 phut"
+             << " | ";
+        cout << setw(10) << "Diem GK"
+             << " | ";
+        cout << setw(10) << "Diem thi"
+             << " | ";
+        cout << setw(10) << "Diem TBHK"
+             << " | " << endl;
+        printBD(p->infoBD);
+        cout << "\n____________________________________________________________________________________________________________\n";
     }
 }
 
@@ -276,23 +294,42 @@ void findById(ListBangDiem listbd)
     NodeBD *p;
     p = listbd.head;
     char id[50];
-    cout << "Nhap ma sinh vien can tìm  kiem thong tin bang diem: ";
+    cout << "Nhap ma sinh vien de tim kiem bang diem: ";
     fflush(stdin);
     gets(id);
-    for (p = listbd.head; p != NULL; p = p->next)
+    while (p != NULL)
     {
         if (strcmp(id, p->infoBD.listSV.maSV) == 0)
-        {
-            cout << "\n______________________________________________________________________________________________\n";
-            printBD(p->infoBD);
             break;
-            cout << "\n______________________________________________________________________________________________\n";
-        }
+        p = p->next;
     }
     if (p == NULL)
     {
         cout << "Khong tim thay ma sinh vien " << id << " trong danh sach" << endl;
         cout << "\n__________________________________________________________________\n";
+    }
+    else
+    {
+        cout << "Thong tin bang diem sinh vien co ma: " << id << endl;
+        cout << "\n____________________________________________________________________________________________________________\n";
+        cout << setw(10) << "Ma sinh vien"
+             << " | ";
+        cout << setw(10) << "Ho ten"
+             << " | ";
+        cout << setw(10) << "Lop"
+             << " | ";
+        cout << setw(10) << "Giao vien"
+             << " | ";
+        cout << setw(10) << "Diem 45 phut"
+             << " | ";
+        cout << setw(10) << "Diem GK"
+             << " | ";
+        cout << setw(10) << "Diem thi"
+             << " | ";
+        cout << setw(10) << "Diem TBHK"
+             << " | " << endl;
+        printBD(p->infoBD);
+        cout << "\n____________________________________________________________________________________________________________\n";
     }
 }
 
@@ -308,7 +345,6 @@ void addFirstBD(ListBangDiem listbd)
         NodeBD *p = getNodeBD(bd);
         insertFirstBD(listbd, p);
     }
-    cout << "\nDanh sach bang diem sau khi them len dau\n";
     printListBD(listbd);
 }
 
@@ -324,7 +360,6 @@ void addTailBD(ListBangDiem listbd)
         NodeBD *p = getNodeBD(bd);
         insertTailBD(listbd, p);
     }
-    cout << "\nDanh sach bang diem sau khi them vao sau\n";
     printListBD(listbd);
 }
 
@@ -361,36 +396,76 @@ void averangePointBDSV(ListBangDiem &listbd)
 
 void printBDSVMax(ListBangDiem listbd)
 {
-    NodeBD *max = new NodeBD();
-    max = listbd.head;
+    int max;
+    NodeBD *p = listbd.head;
+    max = p->infoBD.diemThi;
+    while (p != NULL)
+    {
+        if (max < p->infoBD.diemThi)
+            max = p->infoBD.diemThi;
+        p = p->next;
+    }
+    cout << "\nDanh sach sinh vien co diem thi thap nhat\n";
+    cout << setw(10) << "Ma sinh vien"
+         << " | ";
+    cout << setw(10) << "Ho ten"
+         << " | ";
+    cout << setw(10) << "Lop"
+         << " | ";
+    cout << setw(10) << "Giao vien"
+         << " | ";
+    cout << setw(10) << "Diem 45 phut"
+         << " | ";
+    cout << setw(10) << "Diem GK"
+         << " | ";
+    cout << setw(10) << "Diem thi"
+         << " | ";
+    cout << setw(10) << "Diem TBHK"
+         << " | " << endl;
     for (NodeBD *p = listbd.head; p != NULL; p = p->next)
     {
-        if ((max->infoBD.diem45p * 0.2 + max->infoBD.diemGK * 0.3 + max->infoBD.diemThi * 0.5) < (p->infoBD.diem45p * 0.2 + p->infoBD.diemGK * 0.3 + p->infoBD.diemThi * 0.5))
+        if (p->infoBD.diemThi == max)
         {
-            max = p;
+            printBD(p->infoBD);
         }
     }
-    cout << "\n_______________________________________________________\n";
-    cout << "\nSinh vien co diem trung binh hoc ki cao nhat la: \n";
-    printBD(max->infoBD);
-    cout << "\n_______________________________________________________\n";
 }
 
 void printBDSVMin(ListBangDiem listbd)
 {
-    NodeBD *min = new NodeBD();
-    min = listbd.head;
+    int min;
+    NodeBD *p = listbd.head;
+    min = p->infoBD.diemThi;
+    while (p != NULL)
+    {
+        if (min > p->infoBD.diemThi)
+            min = p->infoBD.diemThi;
+        p = p->next;
+    }
+    cout << "\nDanh sach sinh vien co diem thi thap nhat\n";
+    cout << setw(10) << "Ma sinh vien"
+         << " | ";
+    cout << setw(10) << "Ho ten"
+         << " | ";
+    cout << setw(10) << "Lop"
+         << " | ";
+    cout << setw(10) << "Giao vien"
+         << " | ";
+    cout << setw(10) << "Diem 45 phut"
+         << " | ";
+    cout << setw(10) << "Diem GK"
+         << " | ";
+    cout << setw(10) << "Diem thi"
+         << " | ";
+    cout << setw(10) << "Diem TBHK"
+         << " | " << endl;
     for (NodeBD *p = listbd.head; p != NULL; p = p->next)
     {
-        if ((min->infoBD.diem45p * 0.2 + min->infoBD.diemGK * 0.3 + min->infoBD.diemThi * 0.5) > (p->infoBD.diem45p * 0.2 + p->infoBD.diemGK * 0.3 + p->infoBD.diemThi * 0.5))
+        if (p->infoBD.diemThi == min)
         {
-            min = p;
+            printBD(p->infoBD);
         }
     }
-    cout << "\n_______________________________________________________\n";
-    cout << "\nSinh vien co diem trung binh hoc ki thap nhat la: \n";
-    printBD(min->infoBD);
-    cout << "\n_______________________________________________________\n";
 }
 
 void sortListBDSVRise(ListBangDiem listbd)
@@ -408,10 +483,9 @@ void sortListBDSVRise(ListBangDiem listbd)
             }
         }
     }
-    cout << "\n_______________________________________________________\n";
-    cout << "\nDanh sach sau khi sap xep theo thu tu tang\n";
+    cout << "\n____________________________________________________________________________________________________________\n";
     printListBD(listbd);
-    cout << "\n_______________________________________________________\n";
+    cout << "\n____________________________________________________________________________________________________________\n";
 }
 
 void sortListBDSVReduce(ListBangDiem listbd)
@@ -430,7 +504,6 @@ void sortListBDSVReduce(ListBangDiem listbd)
         }
     }
     cout << "\n_______________________________________________________\n";
-    cout << "\nDanh sach sau khi sap xep theo thu tu giam\n";
     printListBD(listbd);
     cout << "\n_______________________________________________________\n";
 }
@@ -506,7 +579,6 @@ void editBDSVById(ListBangDiem listbd)
         cin >> p->infoBD.diemThi;
     }
     cout << "\n_______________________________________________________\n";
-    cout << "\nDanh sach bang diem sau khi sua " << endl;
     printListBD(listbd);
     cout << "\n_______________________________________________________\n";
 }
@@ -582,14 +654,25 @@ void printBDSVTB(ListBangDiem listbd)
         if ((p->infoBD.diem45p * 0.2 + p->infoBD.diemGK * 0.3 + p->infoBD.diemThi * 0.5) < 5)
         {
             cout << "___________________________________________________________________________________________" << endl;
+            cout << setw(10) << "Ma sinh vien"
+                 << " | ";
+            cout << setw(10) << "Ho ten"
+                 << " | ";
+            cout << setw(10) << "Lop"
+                 << " | ";
+            cout << setw(10) << "Giao vien"
+                 << " | ";
+            cout << setw(10) << "Diem 45 phut"
+                 << " | ";
+            cout << setw(10) << "Diem GK"
+                 << " | ";
+            cout << setw(10) << "Diem thi"
+                 << " | ";
+            cout << setw(10) << "Diem TBHK"
+                 << " | " << endl;
             printBD(p->infoBD);
-            break;
             cout << "___________________________________________________________________________________________" << endl;
         }
-    }
-    if (p == NULL)
-    {
-        cout << "\nKhong co sinh vien nao co tong diem trung binh hoc ki duoi trung binh!!\n";
     }
 }
 
@@ -609,8 +692,8 @@ int main()
         cout << "\n6. Tim kiem bang diem cua sinh vien theo ma sinh vien";
         cout << "\n7. Tinh tong diem trung binh hoc ki cua tat ca cac sinh vien";
         cout << "\n8. Tinh trung binh cong diem cua 1 sinh vien theo ma sinh vien";
-        cout << "\n9. In thong tin sinh vien co diem trung binh cong lon nhat";
-        cout << "\n10. In thong tin sinh vien co diem trung binh cong nho nhat";
+        cout << "\n9. In thong tin sinh vien co diem thi lon nhat";
+        cout << "\n10. In thong tin sinh vien co diem thi nho nhat";
         cout << "\n11. Sap xep danh sach bang diem theo thu tu tang dan";
         cout << "\n12. Sap xep danh sach bang diem theo thu tu giam dan";
         cout << "\n13. Xoa bang diem theo ma sinh vien";
